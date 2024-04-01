@@ -4,21 +4,27 @@ RSpec.describe "User Registration" do
   it 'can create a user with a name and unique email' do
     visit register_path
 
-    fill_in :user_name, with: 'User One'
-    fill_in :user_email, with:'user1@example.com'
-    click_button 'Create New User'
+    fill_in(:user_name, with: "User One")
+    fill_in(:user_email, with: "some@email.com")
+    fill_in(:user_password, with: "tests")
+    fill_in(:user_password_confirmation, with: "tests")
+
+    click_on("Create New User")
 
     expect(current_path).to eq(user_path(User.last.id))
     expect(page).to have_content("User One's Dashboard")
   end 
 
   it 'does not create a user if email isnt unique' do 
-    User.create(name: 'User One', email: 'notunique@example.com')
+    User.create(name: 'User One', email: 'notunique@example.com', password: "tests", password_confirmation: "tests")
 
     visit register_path
     
     fill_in :user_name, with: 'User Two'
     fill_in :user_email, with:'notunique@example.com'
+    fill_in(:user_password, with: "tests")
+    fill_in(:user_password_confirmation, with: "tests")
+
     click_button 'Create New User'
 
     expect(current_path).to eq(register_path)
